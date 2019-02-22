@@ -60,6 +60,9 @@ import static net.dries007.tfc.world.classic.WorldTypeTFC.ROCKLAYER3;
 @ParametersAreNonnullByDefault
 public class ChunkGenTFC implements IChunkGenerator
 {
+    public static final double SAND_RAINFALL_THRESHOLD = 100;
+    public static final double DRY_GRASS_RAINFALL_THRESHOLD = 200;
+
     public static final IBlockState STONE = Blocks.STONE.getDefaultState();
     public static final IBlockState AIR = Blocks.AIR.getDefaultState();
     public static final IBlockState SALT_WATER = BlocksTFC.FLUID_SALT_WATER.getDefaultState();
@@ -532,7 +535,7 @@ public class ChunkGenTFC implements IChunkGenerator
                 int noise = (int) (noise4[colIndex] / 3.0D + 6.0D);
                 int smooth = -1;
 
-                IBlockState surfaceBlock = BlockRockVariant.get(rock1, rainfall + 1.3 * rand.nextGaussian() >= 150f ? Rock.Type.GRASS : Rock.Type.DRY_GRASS).getDefaultState();
+                IBlockState surfaceBlock = BlockRockVariant.get(rock1, rainfall + 2.5 * (rand.nextDouble() - rand.nextDouble()) >= DRY_GRASS_RAINFALL_THRESHOLD ? Rock.Type.GRASS : Rock.Type.DRY_GRASS).getDefaultState();
                 IBlockState subSurfaceBlock = BlockRockVariant.get(rock1, Rock.Type.DIRT).getDefaultState();
 
                 if (BiomesTFC.isBeachBiome(getBiomeOffset(x - 1, z)) || BiomesTFC.isBeachBiome(getBiomeOffset(x + 1, z)) || BiomesTFC.isBeachBiome(getBiomeOffset(x, z + 1)) || BiomesTFC.isBeachBiome(getBiomeOffset(x, z - 1)))
@@ -582,7 +585,7 @@ public class ChunkGenTFC implements IChunkGenerator
                             outp.setBlockState(x, y + yOffset, z, BlockRockVariant.get(rock1, Rock.Type.RAW).getDefaultState());
 
                         // Deserts / dry areas
-                        if (rainfall < +1.3 * rand.nextGaussian() + 75f)
+                        if (rainfall + 2.5 * (rand.nextDouble() - rand.nextDouble()) < SAND_RAINFALL_THRESHOLD)
                         {
                             subSurfaceBlock = surfaceBlock = BlockRockVariant.get(rock1, Rock.Type.RAW).getVariant(Rock.Type.SAND).getDefaultState();
                         }
